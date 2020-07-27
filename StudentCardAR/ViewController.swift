@@ -15,11 +15,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet var placeholderImage: UIImageView!
     
-    var hawModelNode: SCNNode!
-    var lecturesModelNode: SCNNode!
-    var cafeteriaModelNode: SCNNode!
+    var cardModelNode: SCNNode!
+    var boardingcardModelNode: SCNNode!
+    var mileageModelNode: SCNNode!
     var textModelNode: SCNNode!
-    var gelaendeModelNode: SCNNode!
+    var mapModelNode: SCNNode!
     var planeNode: SCNNode!
     
     override func viewDidLoad() {
@@ -31,12 +31,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = false
 
-        let hawModelScene = SCNScene(named: "art.scnassets/HAW.scn")!
-        hawModelNode =  hawModelScene.rootNode.childNode(withName: "HAW", recursively: true)
-        lecturesModelNode =  hawModelScene.rootNode.childNode(withName: "lectures", recursively: true)
-        cafeteriaModelNode = hawModelScene.rootNode.childNode(withName: "cafeteria", recursively: true)
-        textModelNode = hawModelScene.rootNode.childNode(withName: "Text", recursively: true)
-        gelaendeModelNode = hawModelScene.rootNode.childNode(withName: "Gelaende", recursively: true)
+        let cardModelScene = SCNScene(named: "art.scnassets/CARD.scn")!
+        cardModelNode =  cardModelScene.rootNode.childNode(withName: "CARD", recursively: true)
+        boardingcardModelNode =  cardModelScene.rootNode.childNode(withName: "boardingcard", recursively: true)
+        mileageModelNode = cardModelScene.rootNode.childNode(withName: "mileage", recursively: true)
+        textModelNode = cardModelScene.rootNode.childNode(withName: "Text", recursively: true)
+        mapModelNode = cardModelScene.rootNode.childNode(withName: "map", recursively: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,9 +74,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let node = SCNNode()
         
         if imageName == "studentid" {
-            hawModelNode.scale = SCNVector3(x: 0, y: 0, z: 0)
-            hawModelNode.position.y = 0.015
-            node.addChildNode(hawModelNode)
+            cardModelNode.scale = SCNVector3(x: 0, y: 0, z: 0)
+            cardModelNode.position.y = 0.015
+            node.addChildNode(cardModelNode)
             
             textModelNode.scale = SCNVector3(x: 0.04, y: 0.04, z: 0.04)
             textModelNode.position.y = 0.01
@@ -84,19 +84,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             textModelNode.opacity = 0
             node.addChildNode(textModelNode)
             
-            lecturesModelNode.scale = SCNVector3(x: 0.05, y: 0.05, z: 0.05)
-            lecturesModelNode.eulerAngles.y = -.pi / 2
-            lecturesModelNode.position.y = 0.005
-            lecturesModelNode.position.x = 0.08
-            lecturesModelNode.opacity = 0
-            node.addChildNode(lecturesModelNode)
+            boardingcardModelNode.scale = SCNVector3(x: 0.05, y: 0.05, z: 0.05)
+            boardingcardModelNode.eulerAngles.y = -.pi / 2
+            boardingcardModelNode.position.y = 0.005
+            boardingcardModelNode.position.x = 0.08
+            boardingcardModelNode.opacity = 0
+            node.addChildNode(boardingcardModelNode)
             
-            cafeteriaModelNode.scale = SCNVector3(x: 0.045, y: 0.045, z: 0.045)
-            cafeteriaModelNode.eulerAngles.y = .pi / 2
-            cafeteriaModelNode.position.y = 0.005
-            cafeteriaModelNode.position.x = -0.08
-            cafeteriaModelNode.opacity = 0
-            node.addChildNode(cafeteriaModelNode)
+            mileageModelNode.scale = SCNVector3(x: 0.045, y: 0.045, z: 0.045)
+            mileageModelNode.eulerAngles.y = .pi / 2
+            mileageModelNode.position.y = 0.005
+            mileageModelNode.position.x = -0.08
+            mileageModelNode.opacity = 0
+            node.addChildNode(mileageModelNode)
             
             let plane = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width,
                                  height: imageAnchor.referenceImage.physicalSize.height)
@@ -106,9 +106,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             
             node.addChildNode(planeNode)
         } else {
-            gelaendeModelNode.scale = SCNVector3(x: 0.12, y: 0.12, z: 0.12)
-            gelaendeModelNode.position.y = 0.01
-            node.addChildNode(gelaendeModelNode)
+            mapModelNode.scale = SCNVector3(x: 0.05, y: 0.05, z: 0.05)
+            mapModelNode.position.y = 0.01
+            node.addChildNode(mapModelNode)
         }
         
         let spotLight = createSpotLight()
@@ -123,18 +123,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         guard let imageAnchor = anchor as? ARImageAnchor else { return }
         
         if (!imageAnchor.isTracked) {
-            hawModelNode.scale = SCNVector3(x: 0, y: 0, z: 0)
+            cardModelNode.scale = SCNVector3(x: 0, y: 0, z: 0)
             return
         }
         
         
-        if hawModelNode.scale.x == 0 {
-            lecturesModelNode.opacity = 0
-            cafeteriaModelNode.opacity = 0
+        if cardModelNode.scale.x == 0 {
+            boardingcardModelNode.opacity = 0
+            mileageModelNode.opacity = 0
             textModelNode.opacity = 0
             let scaleAction = SCNAction.scale(to: 0.05, duration: 0.3)
             scaleAction.timingMode = SCNActionTimingMode.easeInEaseOut
-            hawModelNode.runAction(scaleAction)
+            cardModelNode.runAction(scaleAction)
         }
         
         let (min, max) = planeNode.boundingBox
@@ -161,21 +161,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
         if (screenTopRight.y > screenBottomLeft.y) {
             //left
-            hawModelNode.runAction(SCNAction.rotateTo(x: 0, y: .pi / 2, z: 0, duration: 0.3))
-            lecturesModelNode.runAction(fadeOut)
-            cafeteriaModelNode.runAction(fadeIn)
+            cardModelNode.runAction(SCNAction.rotateTo(x: 0, y: .pi / 2, z: 0, duration: 0.3))
+            boardingcardModelNode.runAction(fadeOut)
+            mileageModelNode.runAction(fadeIn)
             textModelNode.runAction(fadeOut)
         } else if (screenTopLeft.y > screenBottomRight.y) {
             // right
-            hawModelNode.runAction(SCNAction.rotateTo(x: 0, y: -.pi / 2, z: 0, duration: 0.3))
-            lecturesModelNode.runAction(fadeIn)
-            cafeteriaModelNode.runAction(fadeOut)
+            cardModelNode.runAction(SCNAction.rotateTo(x: 0, y: -.pi / 2, z: 0, duration: 0.3))
+            boardingcardModelNode.runAction(fadeIn)
+            mileageModelNode.runAction(fadeOut)
             textModelNode.runAction(fadeOut)
         } else {
             // top
-            hawModelNode.runAction(SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.3))
-            lecturesModelNode.runAction(fadeOut)
-            cafeteriaModelNode.runAction(fadeOut)
+            cardModelNode.runAction(SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: 0.3))
+            boardingcardModelNode.runAction(fadeOut)
+            mileageModelNode.runAction(fadeOut)
             textModelNode.runAction(fadeIn)
         }
             
